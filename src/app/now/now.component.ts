@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {DatePipe} from "@angular/common";
+import {SolarService, SunPosition } from '../solar.service';
 
 @Component({
   selector: 'app-now',
@@ -12,13 +13,21 @@ import {DatePipe} from "@angular/common";
 })
 export class NowComponent {
   public clock = new Date();
+  public sunset = new Date();
+  sunPosition: SunPosition | undefined;
 
-  constructor() {
-    setInterval(() => this.refresh(), 1000)
+  constructor(private solarService: SolarService) {
+    setInterval(() => this.refresh(), 1000);
+    solarService.recherchePositionSoleil().subscribe(data => {
+      console.log(("data = " + data.results?.sunset))
+      this.sunPosition = data;
+    });
   }
 
   private refresh() {
     this.clock = new Date();
+    // @ts-ignore
+    this.sunset = this.sunPosition?.results?.sunset;
   }
 
 }
