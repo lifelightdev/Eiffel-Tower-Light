@@ -26,8 +26,9 @@ export class NowComponent {
 
   private refresh() {
     this.clock = new Date();
-    // @ts-ignore
-    this.sunset = this.sunPosition?.results?.sunset;
+    if (this.sunPosition?.results?.sunset) {
+      this.sunset = this.sunPosition?.results?.sunset;
+    }
   }
 
 }
