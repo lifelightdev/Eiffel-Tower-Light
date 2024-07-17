@@ -37,4 +37,14 @@ describe('NowComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('#clock')?.textContent).toContain('Il est ');
   });
+
+  it ('should date is in summer', () => {
+    let summer = new Date(2024,6,14); // 14 Juillet 2024
+    expect(component.isSummer(summer)).toBeTrue()
+  })
+
+  it ('should date is in winter', () => {
+    let summer = new Date(2024,11,25); // 25 Décembre 2024
+    expect(component.isSummer(summer)).toBeFalsy()
+  })
 });
