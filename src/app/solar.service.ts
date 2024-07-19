@@ -1,5 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
+import {parse} from 'date-fns';
+import {tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +11,17 @@ export class SolarService {
   constructor(private readonly http: HttpClient) {
   }
 
-  public recherchePositionSoleil() {
-    return this.http.get<SunPosition>(`https://api.sunrise-sunset.org/json?lat=48.858370&lng=2.294481`);
+  public findSunPositionAtEiffelTower() {
+    return this.http.get<SunPosition>(`https://api.sunrise-sunset.org/json?lat=48.858370&lng=2.294481`).pipe(tap(data => {
+      if (data.results?.sunset) {
+        const sunsetDateParse: Date = parse(data.results.sunset.toString(), 'h:mm:ss a', new Date());
+        let sunsetDate = new Date();
+        sunsetDate.setHours(sunsetDateParse.getHours() + (-sunsetDateParse.getTimezoneOffset() / 60));
+        sunsetDate.setMinutes(sunsetDateParse.getMinutes());
+        sunsetDate.setSeconds(sunsetDateParse.getSeconds());
+        data.results.sunset = sunsetDate;
+      }
+    }));
   }
 
 }

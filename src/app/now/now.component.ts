@@ -17,12 +17,12 @@ export class NowComponent {
   public sunset = new Date();
   sunPosition: SunPosition | undefined;
   private firstDayOfSeason = 21;
-  private firstMonthOfSeason = 5; // June
-  private lastMonthOfSeason = 8; // Seprember
+  private firstMonthOfSummer = Month.June;
+  private lastMonthOfSummer = Month.September;
 
   constructor(private solarService: SolarService) {
     setInterval(() => this.refresh(), 1000);
-    solarService.recherchePositionSoleil().subscribe(data => {
+    solarService.findSunPositionAtEiffelTower().subscribe(data => {
       this.sunPosition = data;
     });
   }
@@ -35,26 +35,34 @@ export class NowComponent {
   }
 
   public isSummer(summer: Date): boolean {
-    if (summer.getMonth() >= this.firstMonthOfSeason && summer.getMonth() <= this.lastMonthOfSeason) {
-      if (summer.getMonth() == this.firstMonthOfSeason) {
-        if (summer.getDate() >= this.firstDayOfSeason) {
-          return true;
-        } else {
-          return false;
-        }
-      } else if (summer.getMonth() == this.lastMonthOfSeason) {
-        if (summer.getDate() < this.firstDayOfSeason) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        return true;
-      }
-    } else {
-      return false;
+    if (this.isCompleteSummerMonth(summer)) {
+      return true;
     }
-    return true;
+    if (summer.getMonth() == this.firstMonthOfSummer && summer.getDate() >= this.firstDayOfSeason) {
+      return true;
+    }
+    if (summer.getMonth() == this.lastMonthOfSummer && summer.getDate() < this.firstDayOfSeason) {
+      return true;
+    }
+    return false;
   }
 
+  private isCompleteSummerMonth(summer: Date) {
+    return summer.getMonth() > this.firstMonthOfSummer && summer.getMonth() < this.lastMonthOfSummer;
+  }
+}
+
+enum Month {
+  January,
+  February,
+  March,
+  April,
+  May,
+  June,
+  July,
+  August,
+  September,
+  October,
+  November,
+  December
 }
