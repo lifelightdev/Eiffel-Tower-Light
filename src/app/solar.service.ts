@@ -30,6 +30,11 @@ export class SunPosition {
   results: Results | undefined;
   status: string | undefined;
   tzid: string | undefined;
+
+  constructor(sunset?: Date) {
+    this.results = new Results();
+    this.results.sunset = sunset;
+  }
 }
 
 export class Results {

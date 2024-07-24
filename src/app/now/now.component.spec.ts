@@ -1,26 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NowComponent } from './now.component';
+import {NowComponent} from './now.component';
 import {AppComponent} from "../app.component";
-import { SolarService } from '../solar.service';
-import { provideHttpClient } from '@angular/common/http';
-import {HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {SolarService, SunPosition} from '../solar.service';
+import {of} from "rxjs";
 
 describe('NowComponent', () => {
   let component: NowComponent;
   let fixture: ComponentFixture<NowComponent>;
-  let service: SolarService;
+  let solarServiceStub: Partial<SolarService>;
 
   beforeEach(async () => {
+    solarServiceStub = {
+      findSunPositionAtEiffelTower: jasmine.createSpy('findSunPositionAtEiffelTower').and.returnValues(of(new SunPosition(new Date(2024, 6, 23, 41, 43))))
+    };
+
     await TestBed.configureTestingModule({
-      providers: [
-        SolarService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [{provide: SolarService, useValue: solarServiceStub}],
       imports: [NowComponent]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NowComponent);
     component = fixture.componentInstance;
@@ -35,8 +33,7 @@ describe('NowComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#clock')?.textContent).toContain('Il est ');
+    expect(compiled.querySelector('#clock')?.textContent).toContain('il est ');
   });
-
 
 });
